@@ -17,12 +17,17 @@
             console.log(game);
         }
 
-        async function joinGame() {
-
+        async function joinGame(id) {
+            let response = await axios.get('/api/game/' + id);
+            game = response.data;
+            console.log(game);
         }
 
-        async function play(position) {
-
+        async function play(gameId, column) {
+            let obj = { gameId, column };
+            let response = await axios.put('/api/game/', obj);
+            game = response.data;
+            console.log(game);
         }
 
     </script>

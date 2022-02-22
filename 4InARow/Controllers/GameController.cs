@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using _4InARow.Model;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,24 +13,34 @@ namespace _4InARow.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        // GET: api/<GameController>
+        private const string ConnStr =
+            "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=4InARow;Integrated Security=True";
+
         [HttpGet("{id}")]
-        public Game Get(int id)
+        public Game Join(int id)
         {
-            return null;
+            // lese fra db
+            return new Game() {Id = id};
         }
 
-        // POST api/<GameController>
         [HttpPost]
         public Game Start()
         {
-            return new Game(){Id = 7};
+            const string sql = "insert into game (pieces) values ('0000000000000000000000000000000000000000000000000');" +
+                               "SELECT @@IDENTITY AS 'Identity';";
+            // lage spill + lagre i db + lese tilbake (id fra db)
+            var conn= new SqlConnection(ConnStr);
+            var id = conn.ExecuteScalar<int>(sql);
+            return new Game {Id = id};
         }
 
-        // PUT api/<GameController>/5
-        [HttpPut("{id}")]
-        public void Put(int id)
+        [HttpPut]
+        public Game Play(Move move)
         {
+            // hente spill fra db 
+            // gjøre trekk
+            // lagre spill i db
+            return new Game() { Id = move.GameId };
         }
     }
 }
