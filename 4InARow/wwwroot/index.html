@@ -9,25 +9,37 @@
     <h3>Fire på rad</h3>
 
     <script>
-        let game = null;
-
         async function startGame() {
             let response = await axios.post('/api/game');
-            game = response.data;
-            console.log(game);
+            show(response.data);
         }
 
         async function joinGame(id) {
             let response = await axios.get('/api/game/' + id);
-            game = response.data;
-            console.log(game);
+            show(response.data);
         }
 
         async function play(gameId, column) {
             let obj = { gameId, column };
             let response = await axios.put('/api/game/', obj);
-            game = response.data;
-            console.log(game);
+            show(response.data);
+        }
+
+        function show(game) {
+            console.log(`Game id: ${game.id}`);
+            let pieces = game.pieces;
+            console.log(
+                getRow(pieces, 0) + '\n' + 
+                getRow(pieces, 1) + '\n' + 
+                getRow(pieces, 2) + '\n' + 
+                getRow(pieces, 3) + '\n' + 
+                getRow(pieces, 4) + '\n' + 
+                getRow(pieces, 5) + '\n' + 
+                getRow(pieces, 6) + '\n'
+                );
+        }
+        function getRow(pieces, rowIndex) {
+            return pieces.slice(rowIndex * 7, rowIndex * 7 + 6);
         }
 
     </script>

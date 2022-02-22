@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 using _4InARow.Model;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -17,30 +19,43 @@ namespace _4InARow.Controllers
             "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=4InARow;Integrated Security=True";
 
         [HttpGet("{id}")]
-        public Game Join(int id)
+        public async Task<Game> Join(int id)
         {
             // lese fra db
-            return new Game() {Id = id};
+            const string sql = "select * from game where id = @Id";
+            var conn = new SqlConnection(ConnStr);
+            var games = await conn.QueryAsync<Game>(sql, new {Id = id});
+            return games.FirstOrDefault();
         }
 
         [HttpPost]
-        public Game Start()
+        public async Task<Game> Start()
         {
             const string sql = "insert into game (pieces) values ('0000000000000000000000000000000000000000000000000');" +
                                "SELECT @@IDENTITY AS 'Identity';";
             // lage spill + lagre i db + lese tilbake (id fra db)
             var conn= new SqlConnection(ConnStr);
-            var id = conn.ExecuteScalar<int>(sql);
+            var id = await conn.ExecuteScalarAsync<int>(sql);
             return new Game {Id = id};
         }
 
         [HttpPut]
-        public Game Play(Move move)
+        public async Task<Game> Play(Move move)
         {
             // hente spill fra db 
+            const string sql = "select * from game where id = @GameId";
+            var conn = new SqlConnection(ConnStr);
+            var games = await conn.QueryAsync<Game>(sql, move);
+            var game = games.FirstOrDefault();
+            
             // gjøre trekk
+            game.Move(4);
+
             // lagre spill i db
-            return new Game() { Id = move.GameId };
+            const string updateSql = "update game set pieces = @Pieces where id = @Id";
+            var rowsOffected = await conn.ExecuteScalarAsync(updateSql, game);
+
+            return game;
         }
     }
 }
