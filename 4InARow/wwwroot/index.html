@@ -1,0 +1,30 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h3>Fire på rad</h3>
+
+    <script>
+        let game = null;
+
+        async function startGame() {
+            let response = await axios.post('/api/game');
+            game = response.data;
+            console.log(game);
+        }
+
+        async function joinGame() {
+
+        }
+
+        async function play(position) {
+
+        }
+
+    </script>
+</body>
+</html>
