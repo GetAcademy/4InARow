@@ -7,7 +7,6 @@ namespace _4InARow.Model
     {
         public int Id { get; set; }
         public string Pieces { get; set; }
-        //public bool? Pieces { get; set; }
 
         public Game()
         {
