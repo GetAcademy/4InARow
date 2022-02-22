@@ -6,17 +6,19 @@ namespace _4InARow.Model
     public class Game
     {
         public int Id { get; set; }
-        public char[] Pieces { get; set; }
+        public string Pieces { get; set; }
         //public bool? Pieces { get; set; }
 
         public Game()
         {
-            Pieces = Enumerable.Repeat(' ', 49).ToArray();
+            Pieces = string.Empty.PadLeft(49, ' ');
         }
 
         public void Move(int columnIndex)
         {
-            Pieces[0] = '1';
+            var pieces = Pieces.ToCharArray();
+            pieces[0] = '1';
+            Pieces = new string(pieces);
         }
     }
 }
